@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/ubuntu/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -57,9 +57,14 @@ plugins=(git, git-extras, git-flow, pip, python, sudo, wd, common-aliases, comma
 # web-search, tmux # tmux plugin is not working togheter with zsh-syntax-highlighting, however opening it manually still works
 # zsh-autosuggestions
 
+# zsh extras:
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
+setopt share_history
 setopt COMPLETE_ALIASES
+
+setopt correct
+autoload -U colors && colors
 
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
@@ -67,11 +72,15 @@ zle -N down-line-or-beginning-search
 [[ -n "$key[Up]" ]] && bindkey -- "$key[Up]" up-line-or-beginning-search
 [[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
 
+setopt extended_glob
+autoload -U zmv
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
+zmodload zsh/mathfunc
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
@@ -80,7 +89,7 @@ export LANG=en_US.UTF-8
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='mvim'
+  export EDITOR='vim'  # mvim
 fi
 
 # Compilation flags
@@ -97,3 +106,47 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # Example aliases
 alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias trim="sed -e 's/^ *//' -e 's/ *$//'"
+# alias ext="sed -e 's/\..*$//'"
+# alias tunnel="sshuttle --dns -vvr aws 0/0"
+alias wgetmirror="wget --mirror --convert-links --adjust-extension --page-requisites --wait=0.5"
+myuntar(){
+dirname=${1:r:r}
+mkdir $dirname
+tar -xvzf $1 -C $dirname
+}
+mytar(){
+tar -zcvf $1.tar.gz $1
+}
+myunzip(){
+dirname=${1:r}
+mkdir $dirname
+unzip -d $dirname $1
+}
+myzip(){
+zip -r $1 $1
+}
+
+# pdf2gray(){
+# gs \
+#  -sOutputFile=${1:r}_gray.pdf \
+#  -sDEVICE=pdfwrite \
+#  -sColorConversionStrategy=Gray \
+#  -dProcessColorModel=/DeviceGray \
+#  -dCompatibilityLevel=1.4 \
+#  -dNOPAUSE \
+#  -dBATCH \
+#  -dAutoRotatePages=/None \
+#  $1
+# }
+# pdf2gray2(){
+# convert -density 400 -quality 100 -colorspace GRAY $1 ${1:r}_gray.pdf
+# }
+#
+# pdf2ocrE(){
+# ~/Dropbox/bin/OCRmyPDF-2.2-stable/OCRmyPDF.sh $1 ${1:r}_ocrE.pdf
+# }
+#
+# pdf2ocrD(){
+# ~/Dropbox/bin/OCRmyPDF-2.2-stable/OCRmyPDF.sh $1 ${1:r}_ocrD.pdf -l deu
+# }
